@@ -58,19 +58,13 @@ export const getConfigDirectory = () => findFile(CONFIG_DIRECTORIES);
  * Get the directory containing runtime data
  * @internal
  */
-export const getDataPath = () => {
-  // Attempt to read the path.data setting from kibana.yml
-  const configPath = getConfigPath(); // Get the path of the kibana.yml file
-  console.log("CONFIG FILE " + configPath);
-  try {
-    const configContent = readFileSync(configPath, 'utf8'); // Read the content of the kibana.yml file
-    const match = configContent.match(/path\.data:\s*(.*)/); // Search for the path.data setting using a regular expression
-    if (match && match[1]) {
-      return match[1].trim(); // Return the value of path.data if found
-    }
-  } catch (e) {
-    // Handle any errors that occur while reading the file
+ export const getDataPath = () => {
+  // Use the KIBANA_DATA_PATH environment variable if it is set
+  if (process.env.KIBANA_DATA_PATH) {
+    return process.env.KIBANA_DATA_PATH;
   }
+  
+  // Fallback to predefined data paths if the environment variable is not set
   return findFile(DATA_PATHS);
 };
 
